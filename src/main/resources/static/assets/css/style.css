@@ -1,0 +1,125 @@
+@import url(https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap);
+
+.content > main > div:not(:first-of-type):not(:last-of-type):nth-of-type(2n), .content > main > div:not(:last-of-type):nth-of-type(odd) {
+    border-bottom-left-radius: unset;
+    border-bottom-right-radius: unset;
+    margin-bottom: calc(-1 * var(--ygp-radius))
+}
+
+:root {
+    --ygp-color-text: black;
+    --ygp-color-gb-100: hsl(0, 0%, 100%);
+    --ygp-color-card-100: hsl(0, 0%, 98%);
+    --ygp-color-card-200: hsl(0, 0%, 94%);
+    --ygp-color-card-300: hsl(0, 0%, 91%);
+    --ygp-color-card-400: hsl(0, 0%, 88%);
+    --ygp-color-accent-400: hsl(187, 70%, 50%);
+    --ygp-color-accent-500: hsl(187, 70%, 30%);
+    --ygp-radius: 1rem
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ygp-color-text: white;
+        --ygp-color-gb-100: hsl(0, 0%, 4%);
+        --ygp-color-card-100: hsl(0, 0%, 22%);
+        --ygp-color-card-200: hsl(0, 0%, 16%);
+        --ygp-color-card-300: hsl(0, 0%, 10%);
+        --ygp-color-card-400: hsl(0, 0%, 7%);
+        --ygp-color-accent-400: hsl(187, 70%, 50%);
+        --ygp-color-accent-500: hsl(187, 70%, 40%)
+    }
+}
+
+* {
+    font-family: Comfortaa, serif;
+}
+
+body, html {
+    color: var(--ygp-color-text);
+    padding: 0;
+    margin: 0;
+    height: 100%
+}
+
+.content > main > div h1, .content > main > div h2, .content > main > div h3, .content > main > div h4, .content > main > div h5, .content > main > div h6, .link, a {
+    color: var(--ygp-color-accent-400)
+}
+
+.content {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--ygp-color-gb-100)
+}
+
+.content > main > div {
+    padding: var(--ygp-radius) var(--ygp-radius) var(--ygp-radius) var(--ygp-radius);
+    border-radius: var(--ygp-radius);
+    background-color: var(--ygp-color-card-300);
+    position: relative
+}
+
+.content > main > div:not(:last-of-type) {
+    padding: var(--ygp-radius) var(--ygp-radius) calc(var(--ygp-radius) * 2) var(--ygp-radius)
+}
+
+.content > main > div:not(:last-of-type):nth-of-type(odd) {
+    background-color: var(--ygp-color-card-200)
+}
+
+.content > main > div:nth-of-type(odd) {
+    background-color: var(--ygp-color-card-200)
+}
+
+.content > main > div[data-lang]::before {
+    float: right;
+    content: '';
+    width: 1.9rem;
+    height: 1.3rem;
+    background-size: cover;
+    position: relative;
+    display: inline-block;
+    color: #000
+}
+
+.content > main > div[data-lang=hu]::before {
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/c/c1/Flag_of_Hungary.svg')
+}
+
+.content > main > div[data-lang=en]::before {
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg')
+}
+
+.content > main > div[data-lang=ua]::before {
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/4/49/Flag_of_Ukraine.svg')
+}
+
+.content > main > div > :first-child {
+    margin-block-start: unset
+}
+
+.content > main > div > :last-child {
+    margin-block-end: unset
+}
+
+.content > main > footer {
+    border-radius: var(--ygp-radius);
+    border-top-left-radius: unset;
+    border-top-right-radius: unset;
+    text-align: center;
+    padding: calc(var(--ygp-radius) * 2) var(--ygp-radius) var(--ygp-radius) var(--ygp-radius);
+    margin-top: calc(-1 * var(--ygp-radius));
+    background-color: var(--ygp-color-card-400);
+}
+
+.link, a {
+    text-decoration: none
+}
+
+.link:focus, .link:hover, a:focus, a:hover {
+    color: var(--ygp-color-accent-500);
+    padding-bottom: 0.5px;
+    border-bottom: 1px solid var(--ygp-color-accent-500)
+}
