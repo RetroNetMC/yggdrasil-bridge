@@ -36,4 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 /gradle/wrapper/gradle-wrapper.jar
-/.env
+**/.env
+**/.run/
+**/docker-compose.override.yml

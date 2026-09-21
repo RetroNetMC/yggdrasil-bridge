@@ -1,0 +1,58 @@
+name: "mc_retronet_hu"
+
+services:
+  db:
+    image: "mysql:latest"
+    hostname: "db"
+    environment:
+      - "MYSQL_DATABASE=${DB_ENGINE_DATABASE}"
+      - "MYSQL_PASSWORD=${DB_ENGINE_PASSWORD}"
+      - "MYSQL_USER=${DB_ENGINE_USERNAME}"
+      - "MYSQL_ROOT_PASSWORD=${DB_ENGINE_ROOT_PASSWORD}"
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+    volumes:
+#      - "./run/db:/var/lib/mysql"
+      - "~/mc_retronet_hu/db:/var/lib/mysql"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 0s
+
+  worker:
+    image: cr.czompicloud.hu/retronetmc/yggdrasil-server:latest
+    build:
+      context: .
+    volumes:
+      - worker-data:/data
+    environment:
+      - DB_ENGINE_PROVIDER
+      - DB_ENGINE_HOSTPORT
+      - DB_ENGINE_USERNAME
+      - DB_ENGINE_PASSWORD
+      - DB_ENGINE_DATABASE
+      - AUTH_SERVER_JWT_SECRET
+      - AUTH_SERVER_KEY_SEED
+      - AUTH_SERVER_TABLE_USERS
+      - AUTH_SERVER_TABLE_TEXTURES
+      - AUTH_SERVER_TABLE_SESSIONS
+      - MSA_CLIENT_ID
+      - MSA_CLIENT_SECRET
+      - BASE_URL
+    ports:
+      - "5001:5001"
+    depends_on:
+      db:
+        condition: service_healthy
+
+networks:
+  default:
+    driver: bridge
+    name: mc_retronet_hu
+
+volumes:
+  worker_data:
