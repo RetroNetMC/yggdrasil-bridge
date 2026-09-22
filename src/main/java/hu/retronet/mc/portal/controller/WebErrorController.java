@@ -8,8 +8,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.boot.webmvc.error.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDateTime;
@@ -45,7 +43,7 @@ public class WebErrorController implements ErrorController {
             LocalDateTime timestamp = LocalDateTime.now();
             String errorName;
             String cause;
-            if(exception != null) {
+            if (exception != null) {
                 errorName = exception.getClass().getSimpleName();
                 cause = exception.getCause() != null ? exception.getCause().getMessage() : null;
             } else {

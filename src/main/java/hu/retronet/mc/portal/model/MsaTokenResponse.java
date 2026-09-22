@@ -29,5 +29,5 @@ public class MsaTokenResponse implements Serializable {
 
     @JsonProperty("expires_in")
     private int expiresIn;
-}
 
+}

@@ -121,12 +121,11 @@ public class AuthenticationController {
             if(userRepository.findByUuid(profile.getId()).isEmpty()) {
                 User user = new User();
                 user.setUuid(profile.getId());
-                user.setUsername(profile.getName());
                 String emailDomain = System.getenv("PROFILE_DUMMY_EMAIL_DOMAIN");
                 if (emailDomain == null || emailDomain.isEmpty()) {
                     emailDomain = "dummy.example.com"; // Default domain if not set
                 }
-                var email = profile.getName() + "@" + emailDomain;
+                String email = profile.getName() + profile.getId().toString().substring(0,4) + "@" + emailDomain;
                 user.setEmail(email);
                 userRepository.save(user);
             }
