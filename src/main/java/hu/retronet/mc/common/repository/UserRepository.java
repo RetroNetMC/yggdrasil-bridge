@@ -13,15 +13,6 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
-     * @param username Username to be found
-     * @return The player credentials. When no player present with said username, it returns Optional.empty()
-     */
-    @Query("SELECT u " +
-            "FROM User u " +
-            "WHERE u.username = :user_name")
-    Optional<User> findByUsername(@Param("user_name") String username);
-
-    /**
      * @param email E-mail address of user to be found
      * @return The player credentials. When no player present with said username, it returns Optional.empty()
      */
@@ -29,18 +20,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "FROM User u " +
             "WHERE u.email = :email")
     Optional<User> findByEmail(@Param("email") String email);
-
-    /**
-     * Find a user by their email or username.
-     * @param email
-     * @param username
-     * @return The user, or Optional.empty() if no user is found.
-     */
-    @Query("SELECT u " +
-            "FROM User u " +
-            "WHERE u.email = :email" +
-            "   OR u.username = :username")
-    Optional<User> findByEmailOrUsername(@Param("email") String email, @Param("username") String username);
 
     /**
      * Find a user by their UUID.
