@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/css/error-style.css">
+    <title>RetroNET MC Portal</title>
+</head>
+<body>
+<div class="content">
+    <main>
+        <h1>RetroNET MC Portal</h1>
+        <div>
+            <h2 th:text="${error.getError()}"></h2>
+            <p th:text="${error.getErrorMessage()}"></p>
+            <th:block th:if="${error.getCause() != null}">
+                <p th:text="${error.getCause()}"></p>
+            </th:block>
+
+            <p th:text="${error.getStatusCode()}"></p>
+            <p th:text="${error.getPath()}"></p>
+            <p th:text="${error.getTimestamp()}"></p>
+        </div>
+        <footer>
+            &copy; <a href="https://github.com/RetroNetMC">The RetroNET Team</a> 2026
+        </footer>
+    </main>
+</div>
+</body>
+</html>

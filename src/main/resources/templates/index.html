@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="generator" th:content="'Yggdrasil Bridge v' + ${app_version}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <title>RetroNET MC Portal</title>
+</head>
+<body>
+
+        <div class="container">
+            <h1>Welcome <span th:text="${profile.getName()}"></span>!</h1>
+            <p>You've successfully logged into Yggdrasil Bridge.</p>
+
+            <div class="button-container">
+                <a href="/auth/logout" class="button">Logout</a>
+            </div>
+        </div>
+</body>
+</html>
