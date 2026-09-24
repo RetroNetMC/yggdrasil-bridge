@@ -42,7 +42,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
 
     implementation 'tools.jackson.core:jackson-core:3.2.2'
     implementation 'tools.jackson.core:jackson-databind:3.2.2'
