@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM gradle:9.4-jdk17-alpine as build
+FROM gradle:9.4-jdk17-alpine AS build
 
 WORKDIR /src
 
