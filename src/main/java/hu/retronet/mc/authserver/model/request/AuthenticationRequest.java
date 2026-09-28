@@ -1,7 +1,7 @@
 package hu.retronet.mc.authserver.model.request;
 
-import hu.retronet.mc.authserver.model.Agent;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -20,4 +20,10 @@ public class AuthenticationRequest {
 
     private final boolean requestUser = true;
 
+    @Data
+    @AllArgsConstructor
+    public static final class Agent {
+        private final String name;
+        private final int version;
+    }
 }
