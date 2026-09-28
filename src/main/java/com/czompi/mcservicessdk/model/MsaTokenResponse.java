@@ -1,11 +1,8 @@
 package com.czompi.mcservicessdk.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import hu.retronet.mc.common.model.AuthErrorResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
