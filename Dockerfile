@@ -20,7 +20,7 @@ COPY --from=build /src/entrypoint.sh entrypoint.sh
 EXPOSE 5001
 
 # Health check to verify the application is running
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3     CMD curl -f http://localhost:5000/ || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3     CMD curl --insecure -f https://localhost:5001/ || exit 1
 
 RUN chmod +x ./entrypoint.sh
 
