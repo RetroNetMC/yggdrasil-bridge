@@ -43,4 +43,25 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="2-create-table-msa_sessions" author="czompo.david">
+        <createTable tableName="msa_sessions">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_msa_sessions"/>
+            </column>
+            <column name="status" type="VARCHAR(255)"/>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" referencedTableName="users" referencedColumnNames="id"
+                             foreignKeyName="fk_msa_sessions_user"/>
+            </column>
+            <column name="xbox_user_id" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uc_msa_sessions_xbox_user"/>
+            </column>
+            <column name="refresh_token" type="VARCHAR(511)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uc_msa_sessions_refresh_token"/>
+            </column>
+            <column name="created_at" type="DATETIME"/>
+            <column name="expires_at" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>
