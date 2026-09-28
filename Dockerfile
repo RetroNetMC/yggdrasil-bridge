@@ -16,8 +16,7 @@ WORKDIR /app
 COPY --from=build /src/build/libs/*.jar retronetmc-server.jar
 COPY --from=build /src/entrypoint.sh entrypoint.sh
 
-# Expose HTTP and HTTPS ports
-EXPOSE 5000
+# Expose HTTPS port
 EXPOSE 5001
 
 # Health check to verify the application is running
