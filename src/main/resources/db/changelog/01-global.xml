@@ -25,13 +25,14 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="4-create-table-sessions" author="czompo.david">
-        <createTable tableName="sessions">
-            <column name="id" type="BIGINT" autoIncrement="true" incrementBy="1">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_sessions"/>
+    <changeSet id="1-create-table-game_sessions" author="czompo.david">
+        <createTable tableName="game_sessions">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_game_sessions"/>
             </column>
             <column name="user_id" type="BIGINT">
-                <constraints nullable="false" foreignKeyName="fk_sessions_user" referencedTableName="users" referencedColumnNames="id"/>
+                <constraints nullable="false" foreignKeyName="fk_game_sessions_user" referencedTableName="users"
+                             referencedColumnNames="id"/>
             </column>
             <column name="status" type="VARCHAR(16)"/>
             <column name="access_token" type="VARCHAR(255)"/>
