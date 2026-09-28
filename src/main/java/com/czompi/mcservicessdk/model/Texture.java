@@ -1,4 +1,4 @@
-package hu.retronet.mc.portal.model;
+package com.czompi.mcservicessdk.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

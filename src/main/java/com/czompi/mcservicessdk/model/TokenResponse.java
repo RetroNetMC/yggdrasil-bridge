@@ -1,4 +1,4 @@
-package hu.retronet.mc.portal.model;
+package com.czompi.mcservicessdk.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -43,5 +43,9 @@ public class TokenResponse implements Serializable {
 
         @JsonProperty("uhs")
         private String userHash;
+
+        @JsonProperty("xid")
+        private String userId;
+
     }
 }

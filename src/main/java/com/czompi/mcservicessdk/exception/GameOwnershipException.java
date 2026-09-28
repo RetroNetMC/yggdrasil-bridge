@@ -1,4 +1,4 @@
-package hu.retronet.mc.portal.exceptions;
+package com.czompi.mcservicessdk.exception;
 
 public class GameOwnershipException extends Exception {
     public GameOwnershipException(String errorMessage) {

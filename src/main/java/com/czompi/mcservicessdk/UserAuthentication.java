@@ -1,9 +1,15 @@
-package hu.retronet.mc.portal.utils;
+package com.czompi.mcservicessdk;
 
-import hu.retronet.mc.portal.exceptions.ExternalAuthenticationException;
-import hu.retronet.mc.portal.exceptions.GameOwnershipException;
-import hu.retronet.mc.portal.exceptions.GameProfileException;
-import hu.retronet.mc.portal.model.*;
+import com.czompi.mcservicessdk.exception.ExternalAuthenticationException;
+import com.czompi.mcservicessdk.exception.GameOwnershipException;
+import com.czompi.mcservicessdk.exception.GameProfileException;
+import com.czompi.mcservicessdk.model.MinecraftAccount;
+import com.czompi.mcservicessdk.model.MinecraftGameOwnership;
+import com.czompi.mcservicessdk.model.MinecraftToken;
+import com.czompi.mcservicessdk.model.MsaTokenResponse;
+import com.czompi.mcservicessdk.model.TokenResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +17,18 @@ import org.jspecify.annotations.NonNull;
 
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Map;
 
-import static hu.retronet.mc.portal.utils.MSAConstants.*;
-import static hu.retronet.mc.portal.utils.NetworkUtils.*;
+import static com.czompi.mcservicessdk.utils.MSAConstants.CLIENT_ID;
+import static com.czompi.mcservicessdk.utils.MSAConstants.CLIENT_SECRET;
+import static com.czompi.mcservicessdk.utils.MSAConstants.REDIRECT_URI;
+import static com.czompi.mcservicessdk.utils.NetworkUtils.sendGetRequest;
+import static com.czompi.mcservicessdk.utils.NetworkUtils.sendPostRequest;
+import static com.czompi.mcservicessdk.utils.NetworkUtils.toJsonObject;
 
+/**
+ * This class provides authentication functionality for the Minecraft services.
+ */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserAuthentication {
@@ -55,8 +69,7 @@ public class UserAuthentication {
 
     public static MsaTokenResponse refreshMsaToken(String refreshToken) throws ExternalAuthenticationException {
         String tokenRequest = getMsaTokenRequest("refresh_token") +
-                "&refresh_token=" + refreshToken +
-        "&client_secret=" + CLIENT_SECRET;;
+                "&refresh_token=" + refreshToken;
 
         HttpResponse<String> response = sendPostRequest(MSA_TOKEN_URL, tokenRequest, "application/x-www-form-urlencoded");
         if (response == null) {
@@ -68,22 +81,23 @@ public class UserAuthentication {
     private static @NonNull String getMsaTokenRequest(String grantType) {
         return "grant_type=" + grantType +
                 "&scope=" + String.join("%20", MSA_SCOPE) +
-                "&client_id=" + CLIENT_ID;
+                "&client_id=" + CLIENT_ID +
+                "&client_secret=" + CLIENT_SECRET;
     }
 
     // ------- Logic -------
 
     private static TokenResponse getXblToken(String accessToken) throws ExternalAuthenticationException {
-        String request = "{\n" +
-                "    \"Properties\": {\n" +
-                "        \"AuthMethod\": \"RPS\",\n" +
-                "        \"SiteName\": \"user.auth.xboxlive.com\",\n" +
-                "        \"RpsTicket\": \"d=" + accessToken + "\"\n" +
-                "    },\n" +
-                "    \"RelyingParty\": \"http://auth.xboxlive.com\",\n" +
-                "    \"TokenType\": \"JWT\"\n" +
-                "}";
-        HttpResponse<String> response = sendPostRequest(XBL_AUTHENTICATE_URL, request, "application/json");
+        Map<String, Object> request = Map.of(
+                "Properties", Map.of(
+                        "AuthMethod", "RPS",
+                        "SiteName", "user.auth.xboxlive.com",
+                        "RpsTicket", "d=" + accessToken
+                ),
+                "RelyingParty", "http://auth.xboxlive.com",
+                "TokenType", "JWT"
+        );
+        HttpResponse<String> response = sendPostRequest(XBL_AUTHENTICATE_URL, mapToJsonString(request), "application/json");
         if (response == null) {
             throw new ExternalAuthenticationException("Failed to authenticate with Xbox Live.");
         }
@@ -91,28 +105,36 @@ public class UserAuthentication {
     }
 
     private static TokenResponse getXstsToken(TokenResponse xblResponse) throws ExternalAuthenticationException {
-        String request = "{\n" +
-                "    \"Properties\": {\n" +
-                "        \"SandboxId\": \"RETAIL\",\n" +
-                "        \"UserTokens\": [\n" +
-                "            \"" + xblResponse.getToken() + "\"\n" +
-                "        ]\n" +
-                "    },\n" +
-                "    \"RelyingParty\": \"rp://api.minecraftservices.com/\",\n" +
-                "    \"TokenType\": \"JWT\"\n" +
-                "}";
-        HttpResponse<String> response = sendPostRequest(XSTS_AUTHORIZE_URL, request, "application/json");
+        Map<String, Object> request = Map.of(
+                "Properties", Map.of(
+                        "SandboxId", "RETAIL",
+                        "UserTokens", List.of(xblResponse.getToken())
+                ),
+                "RelyingParty", "rp://api.minecraftservices.com/",
+                "TokenType", "JWT"
+        );
+        HttpResponse<String> response = sendPostRequest(XSTS_AUTHORIZE_URL, mapToJsonString(request), "application/json");
         if (response == null) {
             throw new ExternalAuthenticationException("Failed to obtain XSTS Token.");
         }
         return toJsonObject(response, TokenResponse.class);
     }
 
+    private static String mapToJsonString(Object request) {
+        try {
+            return new ObjectMapper().writeValueAsString(request);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static MinecraftToken getMinecraftToken(TokenResponse xstsResponse) throws ExternalAuthenticationException {
         String userHash = xstsResponse.getDisplayClaims().getXui().get(0).getUserHash();
         String xstsToken = xstsResponse.getToken();
-        String request = "{\n    \"identityToken\": \"XBL3.0 x=" + userHash + ";" + xstsToken + "\"\n}";
-        HttpResponse<String> response = sendPostRequest(MCS_AUTH_URL, request, "application/json");
+        Map<String, String> request = Map.of(
+                "identityToken", "XBL3.0 x=" + userHash + ";" + xstsToken
+        );
+        HttpResponse<String> response = sendPostRequest(MCS_AUTH_URL, mapToJsonString(request), "application/json");
         if (response == null) {
             throw new ExternalAuthenticationException("Failed to login to Minecraft Account.");
         }
@@ -123,7 +145,7 @@ public class UserAuthentication {
     ///
     /// @param mcResponse
     /// @throws GameOwnershipException When the user does not own the game or the request fails
-    private static void verifyGameOwnership(MinecraftToken mcResponse) throws GameOwnershipException {
+    private static void verifyGameOwnership(MinecraftToken mcResponse) throws GameOwnershipException, ExternalAuthenticationException {
         HttpResponse<String> response = sendGetRequest(MCS_ENTITLEMENTS_URL, "Authorization", "Bearer " + mcResponse.getAccessToken());
         if (response == null || response.statusCode() != 200) {
             throw new GameOwnershipException("Failed to verify game ownership. Endpoint returned invalid response.");
@@ -143,7 +165,7 @@ public class UserAuthentication {
         log.debug("User owns Minecraft. Ownership verified.");
     }
 
-    private static MinecraftAccount getMinecraftAccount(MinecraftToken mcResponse) throws GameProfileException {
+    private static MinecraftAccount getMinecraftAccount(MinecraftToken mcResponse) throws GameProfileException, ExternalAuthenticationException {
         HttpResponse<String> response = sendGetRequest(MCS_ACCOUNT_URL, "Authorization", "Bearer " + mcResponse.getAccessToken());
         if (response == null) {
             log.error("Failed to get Minecraft Account information.");

@@ -1,6 +1,6 @@
 package hu.retronet.mc.authserver.model.response;
 
-import hu.retronet.mc.authserver.model.UserProfile;
+import com.czompi.mcservicessdk.model.MinecraftProfile;
 import hu.retronet.mc.authserver.model.UserProperties;
 import hu.retronet.mc.common.model.ErrorResponse;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.List;
 public class RefreshResponse extends ErrorResponse {
     private String accessToken;
     private String clientToken;
-    private UserProfile selectedProfile;
-    private List<UserProfile> availableProfiles = new ArrayList<>();
+    private MinecraftProfile selectedProfile;
+    private List<MinecraftProfile> availableProfiles = new ArrayList<>();
     private UserProperties user;
 }

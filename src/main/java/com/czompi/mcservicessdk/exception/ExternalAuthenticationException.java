@@ -1,4 +1,4 @@
-package hu.retronet.mc.portal.exceptions;
+package com.czompi.mcservicessdk.exception;
 
 public class ExternalAuthenticationException extends Exception {
     public ExternalAuthenticationException(String errorMessage) {

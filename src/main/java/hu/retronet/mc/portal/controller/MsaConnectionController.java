@@ -1,5 +1,8 @@
 package hu.retronet.mc.portal.controller;
 
+import com.czompi.mcservicessdk.UserAuthentication;
+import com.czompi.mcservicessdk.model.MinecraftAccount;
+import com.czompi.mcservicessdk.model.MsaTokenResponse;
 import hu.retronet.mc.common.entity.User;
 import hu.retronet.mc.common.model.ErrorResponse;
 import hu.retronet.mc.common.repository.UserRepository;
@@ -21,8 +24,9 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import static hu.retronet.mc.portal.utils.MSAConstants.CLIENT_ID;
-import static hu.retronet.mc.portal.utils.MSAConstants.REDIRECT_URI;
+import static com.czompi.mcservicessdk.utils.MSAConstants.CLIENT_ID;
+import static com.czompi.mcservicessdk.utils.MSAConstants.REDIRECT_URI;
+import static java.text.MessageFormat.format;
 
 @Slf4j
 @Controller

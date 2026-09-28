@@ -1,5 +1,6 @@
 package hu.retronet.mc.portal.controller;
 
+import com.czompi.mcservicessdk.model.MinecraftAccount;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,10 +13,11 @@ public class BaseController {
 
     @GetMapping("/")
     public String index(HttpSession session, Model model) {
-        if (session.getAttribute("profile") == null) {
+        MinecraftAccount profile = (MinecraftAccount) session.getAttribute("profile");
+        if (profile == null) {
             return "redirect:/auth/login";
         }
-        model.addAttribute("profile", session.getAttribute("profile"));
+        model.addAttribute("profile", profile);
         return "index";
     }
 }

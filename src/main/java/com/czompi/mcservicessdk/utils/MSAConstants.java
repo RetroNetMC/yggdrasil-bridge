@@ -1,4 +1,4 @@
-package hu.retronet.mc.portal.utils;
+package com.czompi.mcservicessdk.utils;
 
 public class MSAConstants {
 
