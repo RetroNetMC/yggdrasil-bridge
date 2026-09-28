@@ -1,18 +1,20 @@
 package hu.retronet.mc.authserver.controller;
 
+import com.czompi.mcservicessdk.MojangApi;
+import com.czompi.mcservicessdk.exception.GameProfileException;
+import com.czompi.mcservicessdk.model.MinecraftProfile;
 import hu.retronet.mc.authserver.model.Property;
-import hu.retronet.mc.authserver.model.UserProfile;
 import hu.retronet.mc.authserver.model.UserProperties;
 import hu.retronet.mc.authserver.model.request.RefreshRequest;
 import hu.retronet.mc.authserver.model.response.RefreshResponse;
 import hu.retronet.mc.common.BaseAuthServerController;
 import hu.retronet.mc.common.conditions.ConditionalOnServerType;
-import hu.retronet.mc.common.entity.AuthSession;
+import hu.retronet.mc.common.entity.GameSession;
 import hu.retronet.mc.common.entity.User;
 import hu.retronet.mc.common.model.IErrorResponse;
 import hu.retronet.mc.common.model.ServerType;
 import hu.retronet.mc.common.model.YggdrasilError;
-import hu.retronet.mc.common.repository.AuthSessionRepository;
+import hu.retronet.mc.common.repository.GameSessionRepository;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -36,7 +38,7 @@ import java.util.UUID;
 @ConditionalOnServerType(ServerType.AUTH_SERVER)
 public class RefreshController extends BaseAuthServerController {
 
-    public RefreshController(AuthSessionRepository sessionRepository, TransactionTemplate transactionTemplate) {
+    public RefreshController(GameSessionRepository sessionRepository, TransactionTemplate transactionTemplate) {
         super(sessionRepository, transactionTemplate);
     }
 
@@ -99,7 +101,7 @@ public class RefreshController extends BaseAuthServerController {
                             )
                     ))
             @org.springframework.web.bind.annotation.RequestBody RefreshRequest request) {
-        Optional<AuthSession> session = authSessionRepository.findByAccessTokenAndClientToken(request.getAccessToken(), request.getClientToken());
+        Optional<GameSession> session = gameSessionRepository.findByAccessTokenAndClientToken(request.getAccessToken(), request.getClientToken());
 
         if (session.isEmpty()) {
             return YggdrasilError.INVALID_CREDENTIALS;
@@ -110,10 +112,15 @@ public class RefreshController extends BaseAuthServerController {
         }
         User player = session.get().getUser();
 
-        UserProfile selectedProfile = new UserProfile(player.getUuid(), player.getUsername());
+        MinecraftProfile selectedProfile = null;
+        try {
+            selectedProfile = MojangApi.getProfileById(player.getUuid());
+        } catch (GameProfileException e) {
+            throw new RuntimeException(e);
+        }
         String accessToken = UUID.randomUUID().toString();
 
-        transactionTemplate.execute(status -> authSessionRepository.updateAccessToken(session.get().getUser().getUuid(), session.get().getClientToken(), accessToken));
+        transactionTemplate.execute(status -> gameSessionRepository.updateAccessToken(session.get().getUser().getUuid(), session.get().getClientToken(), accessToken));
 
         List<Property> properties = List.of();
         UserProperties user = new UserProperties(player.getUuid().toString(), properties);

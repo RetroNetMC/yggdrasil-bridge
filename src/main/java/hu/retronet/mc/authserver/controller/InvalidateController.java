@@ -3,11 +3,11 @@ package hu.retronet.mc.authserver.controller;
 import hu.retronet.mc.authserver.model.request.ValidateRequest;
 import hu.retronet.mc.common.BaseAuthServerController;
 import hu.retronet.mc.common.conditions.ConditionalOnServerType;
-import hu.retronet.mc.common.entity.AuthSession;
+import hu.retronet.mc.common.entity.GameSession;
 import hu.retronet.mc.common.model.IErrorResponse;
 import hu.retronet.mc.common.model.ServerType;
 import hu.retronet.mc.common.model.YggdrasilError;
-import hu.retronet.mc.common.repository.AuthSessionRepository;
+import hu.retronet.mc.common.repository.GameSessionRepository;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,7 +30,7 @@ import java.util.Optional;
 @ConditionalOnServerType(ServerType.AUTH_SERVER)
 public class InvalidateController extends BaseAuthServerController {
 
-    public InvalidateController(AuthSessionRepository sessionRepository, TransactionTemplate transactionTemplate) {
+    public InvalidateController(GameSessionRepository sessionRepository, TransactionTemplate transactionTemplate) {
         super(sessionRepository, transactionTemplate);
     }
 
@@ -64,9 +64,9 @@ public class InvalidateController extends BaseAuthServerController {
                             )
                     ))
             @org.springframework.web.bind.annotation.RequestBody ValidateRequest request) {
-        Optional<AuthSession> session = authSessionRepository.findByAccessTokenAndClientToken(request.getAccessToken(), request.getClientToken());
+        Optional<GameSession> session = gameSessionRepository.findByAccessTokenAndClientToken(request.getAccessToken(), request.getClientToken());
         if (session.isPresent()) {
-            transactionTemplate.executeWithoutResult(status -> authSessionRepository.delete(session.get()));
+            transactionTemplate.executeWithoutResult(status -> gameSessionRepository.delete(session.get()));
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else  {
             return YggdrasilError.INVALID_TOKEN;

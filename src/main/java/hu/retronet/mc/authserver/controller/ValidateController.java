@@ -3,10 +3,10 @@ package hu.retronet.mc.authserver.controller;
 import hu.retronet.mc.authserver.model.request.ValidateRequest;
 import hu.retronet.mc.common.BaseAuthServerController;
 import hu.retronet.mc.common.conditions.ConditionalOnServerType;
-import hu.retronet.mc.common.entity.AuthSession;
+import hu.retronet.mc.common.entity.GameSession;
 import hu.retronet.mc.common.model.IErrorResponse;
 import hu.retronet.mc.common.model.ServerType;
-import hu.retronet.mc.common.repository.AuthSessionRepository;
+import hu.retronet.mc.common.repository.GameSessionRepository;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,7 +29,7 @@ import java.util.Optional;
 @ConditionalOnServerType(ServerType.AUTH_SERVER)
 public class ValidateController extends BaseAuthServerController {
 
-    public ValidateController(AuthSessionRepository sessionRepository, TransactionTemplate transactionTemplate) {
+    public ValidateController(GameSessionRepository sessionRepository, TransactionTemplate transactionTemplate) {
         super(sessionRepository, transactionTemplate);
     }
 
@@ -53,7 +53,7 @@ public class ValidateController extends BaseAuthServerController {
                             )
                     ))
             @org.springframework.web.bind.annotation.RequestBody ValidateRequest request) {
-        Optional<AuthSession> session = authSessionRepository.findByAccessTokenAndClientToken(request.getAccessToken(), request.getClientToken());
+        Optional<GameSession> session = gameSessionRepository.findByAccessTokenAndClientToken(request.getAccessToken(), request.getClientToken());
         if (session.isPresent() && isValidSession(session.get())) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else  {

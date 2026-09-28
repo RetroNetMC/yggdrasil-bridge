@@ -1,19 +1,21 @@
 package hu.retronet.mc.authserver.controller;
 
+import com.czompi.mcservicessdk.MojangApi;
+import com.czompi.mcservicessdk.exception.GameProfileException;
+import com.czompi.mcservicessdk.model.MinecraftProfile;
 import hu.retronet.mc.authserver.model.Property;
-import hu.retronet.mc.authserver.model.UserProfile;
 import hu.retronet.mc.authserver.model.UserProperties;
 import hu.retronet.mc.authserver.model.request.AuthenticationRequest;
 import hu.retronet.mc.authserver.model.response.AuthenticationResponse;
 import hu.retronet.mc.common.BaseAuthServerController;
 import hu.retronet.mc.common.conditions.ConditionalOnServerType;
-import hu.retronet.mc.common.entity.AuthSession;
+import hu.retronet.mc.common.entity.GameSession;
 import hu.retronet.mc.common.entity.User;
 import hu.retronet.mc.common.exceptions.InvalidCredentialsException;
 import hu.retronet.mc.common.model.IErrorResponse;
 import hu.retronet.mc.common.model.ServerType;
 import hu.retronet.mc.common.model.YggdrasilError;
-import hu.retronet.mc.common.repository.AuthSessionRepository;
+import hu.retronet.mc.common.repository.GameSessionRepository;
 import hu.retronet.mc.common.service.UserService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -42,7 +44,7 @@ public class AuthenticateController extends BaseAuthServerController {
     @Autowired
     private final UserService userService;
 
-    public AuthenticateController(AuthSessionRepository sessionRepository, TransactionTemplate transactionTemplate, UserService userService) {
+    public AuthenticateController(GameSessionRepository sessionRepository, TransactionTemplate transactionTemplate, UserService userService) {
         super(sessionRepository, transactionTemplate);
         this.userService = userService;
     }
@@ -124,18 +126,23 @@ public class AuthenticateController extends BaseAuthServerController {
             return YggdrasilError.INVALID_CREDENTIALS;
         }
 
-        UserProfile selectedProfile = new UserProfile(user.getUuid(), user.getUsername());
+        MinecraftProfile selectedProfile = null;
+        try {
+            selectedProfile = MojangApi.getProfileById(user.getUuid());
+        } catch (GameProfileException e) {
+            return YggdrasilError.INVALID_CREDENTIALS;
+        }
         String accessToken = UUID.randomUUID().toString();
 
-        if (authSessionRepository.findByEmailAndClientToken(user.getEmail(), request.getClientToken()).isPresent()) {
+        if (gameSessionRepository.findByEmailAndClientToken(user.getEmail(), request.getClientToken()).isPresent()) {
             return YggdrasilError.FORBIDDEN;
         }
 
-        AuthSession session = new AuthSession();
+        GameSession session = new GameSession();
         session.setUser(user);
         session.setClientToken(request.getClientToken());
         session.setAccessToken(accessToken);
-        transactionTemplate.execute(status -> authSessionRepository.save(session));
+        transactionTemplate.execute(status -> gameSessionRepository.save(session));
 
         List<Property> properties = new ArrayList<>();
         UserProperties userProperties = new UserProperties(user.getUuid().toString(),

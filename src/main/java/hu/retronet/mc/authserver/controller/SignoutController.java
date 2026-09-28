@@ -4,7 +4,7 @@ import hu.retronet.mc.authserver.model.request.SignoutRequest;
 import hu.retronet.mc.common.BaseAuthServerController;
 import hu.retronet.mc.common.conditions.ConditionalOnServerType;
 import hu.retronet.mc.common.model.ServerType;
-import hu.retronet.mc.common.repository.AuthSessionRepository;
+import hu.retronet.mc.common.repository.GameSessionRepository;
 import hu.retronet.mc.common.service.UserService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -28,7 +28,7 @@ public class SignoutController extends BaseAuthServerController {
 
     private final UserService userService;
 
-    public SignoutController(AuthSessionRepository sessionRepository, TransactionTemplate transactionTemplate, UserService userService) {
+    public SignoutController(GameSessionRepository sessionRepository, TransactionTemplate transactionTemplate, UserService userService) {
         super(sessionRepository, transactionTemplate);
         this.userService = userService;
     }
