@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.http.ResponseEntity;
 
+import static com.czompi.mcservicessdk.utils.MSAConstants.BASE_URL;
+
 @Getter
 @ToString
 public class YggdrasilError {
@@ -39,6 +41,9 @@ public class YggdrasilError {
 
     /// An attempt to validate an access token obtained from the `/authenticate` endpoint that has expired or become invalid while under rate-limiting conditions.
     public static ResponseEntity<IErrorResponse> INVALID_TOKEN_RATE_LIMITED = errorResponse(new ErrorResponse("ForbiddenOperationException", null, "Invalid token.", 429, null, null));
+
+    /// An attempt to validate an access token obtained from the `/authenticate` endpoint that has expired or become invalid while under rate-limiting conditions.
+    public static ResponseEntity<IErrorResponse> INVALID_MSA_REFRESH_TOKEN = errorResponse(new ErrorResponse("ForbiddenOperationException", "Your Microsoft-session has expired. Please visit '" + BASE_URL + "' website to re-authenticate!", "Microsoft refresh token invalidated", 429, null, null));
 
     public static ResponseEntity<IErrorResponse> getGenericError(Integer status) {
         return errorResponse(new ErrorResponse("UnexpectedError", null, "An unexpected error occurred", status, null, null));

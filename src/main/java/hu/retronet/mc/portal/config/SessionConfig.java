@@ -1,4 +1,4 @@
-package hu.retronet.mc.common.config;
+package hu.retronet.mc.portal.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,5 @@
-package hu.retronet.mc.portal.controller;
+package hu.retronet.mc.portal.config;
 
-import hu.retronet.mc.common.config.SessionConfig;
 import org.springframework.session.web.context.AbstractHttpSessionApplicationInitializer;
 
 public class Initializer extends AbstractHttpSessionApplicationInitializer {

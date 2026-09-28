@@ -10,12 +10,13 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "${AUTH_SERVER_TABLE_AUTH_SESSIONS}")
-public class AuthSession {
+@Table(name = "game_sessions")
+public class GameSession {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     private SessionStatus status = SessionStatus.VALID;
 
     @ManyToOne(fetch = FetchType.LAZY)

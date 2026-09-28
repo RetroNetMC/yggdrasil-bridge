@@ -1,4 +1,4 @@
-package hu.retronet.mc.portal.controller;
+package hu.retronet.mc.portal.utils;
 
 import lombok.Getter;
 

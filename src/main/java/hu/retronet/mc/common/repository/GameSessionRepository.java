@@ -1,6 +1,6 @@
 package hu.retronet.mc.common.repository;
 
-import hu.retronet.mc.common.entity.AuthSession;
+import hu.retronet.mc.common.entity.GameSession;
 import hu.retronet.mc.common.entity.model.SessionStatus;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,25 +13,25 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public interface AuthSessionRepository extends JpaRepository<AuthSession, Long> {
+public interface GameSessionRepository extends JpaRepository<GameSession, Long> {
 
-    Optional<AuthSession> findByClientToken(String clientToken);
+    Optional<GameSession> findByClientToken(String clientToken);
 
     @Query("SELECT s " +
-                "FROM AuthSession s " +
+                "FROM GameSession s " +
             "WHERE s.user.email = :email " +
             "  AND s.clientToken = :client_token")
-    Optional<AuthSession> findByEmailAndClientToken(@Param("email") String email, @Param("client_token") String clientToken);
+    Optional<GameSession> findByEmailAndClientToken(@Param("email") String email, @Param("client_token") String clientToken);
 
     @Query("SELECT s " +
-            "FROM AuthSession s " +
+            "FROM GameSession s " +
             "WHERE s.accessToken = :access_token " +
             "  AND s.clientToken = :client_token")
-    Optional<AuthSession> findByAccessTokenAndClientToken(@Param("access_token") String accessToken, @Param("client_token") String clientToken);
+    Optional<GameSession> findByAccessTokenAndClientToken(@Param("access_token") String accessToken, @Param("client_token") String clientToken);
 
     @Modifying
     @Transactional
-    @Query("UPDATE AuthSession s " +
+    @Query("UPDATE GameSession s " +
             "SET s.accessToken = :access_token " +
             "WHERE s.user.uuid = :user_id" +
             "  AND s.clientToken = :client_token")
@@ -39,7 +39,7 @@ public interface AuthSessionRepository extends JpaRepository<AuthSession, Long> 
 
     @Modifying
     @Transactional
-    @Query("UPDATE AuthSession s " +
+    @Query("UPDATE GameSession s " +
             "SET s.status = :session_status " +
             "WHERE s.accessToken = :access_token" +
             "  AND s.clientToken = :client_token")
@@ -47,25 +47,25 @@ public interface AuthSessionRepository extends JpaRepository<AuthSession, Long> 
 
 
     @Query("SELECT s " +
-            "FROM AuthSession s " +
+            "FROM GameSession s " +
             "WHERE s.user.id = :user_id")
-    List<AuthSession> findByUserId(@Param("user_id") Long userId);
+    List<GameSession> findByUserId(@Param("user_id") Long userId);
 
     @Query("SELECT s " +
-            "FROM AuthSession s " +
+            "FROM GameSession s " +
             "WHERE s.user.id = :user_id")
-    Stream<AuthSession> streamAllByUserId(@Param("user_id") Long userId);
+    Stream<GameSession> streamAllByUserId(@Param("user_id") Long userId);
 
     @Query("SELECT s " +
-            "FROM AuthSession s " +
+            "FROM GameSession s " +
             "WHERE s.user.email = :email")
-    Optional<AuthSession> findByEmail(String email);
+    Optional<GameSession> findByEmail(String email);
 
     @Modifying
     @Transactional
-    @Query("UPDATE AuthSession s " +
+    @Query("UPDATE GameSession s " +
             "SET s.status = SessionStatus.INVALID " +
             "WHERE s = :session")
-    int invalidate(AuthSession session);
+    int invalidate(GameSession session);
 
 }

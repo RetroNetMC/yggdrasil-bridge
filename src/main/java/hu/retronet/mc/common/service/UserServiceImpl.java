@@ -2,7 +2,7 @@ package hu.retronet.mc.common.service;
 
 import hu.retronet.mc.common.entity.User;
 import hu.retronet.mc.common.exceptions.InvalidCredentialsException;
-import hu.retronet.mc.common.repository.AuthSessionRepository;
+import hu.retronet.mc.common.repository.GameSessionRepository;
 import hu.retronet.mc.common.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private AuthSessionRepository sessionRepository;
+    private GameSessionRepository sessionRepository;
 
     @Override
     public User save(User person) {
@@ -28,11 +28,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByUuid(UUID uuid) {
         return userRepository.findByUuid(uuid);
-    }
-
-    @Override
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
     }
 
     @Override

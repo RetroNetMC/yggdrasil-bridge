@@ -16,13 +16,11 @@ public interface UserService {
 
     Optional<User> findByUuid(UUID uuid);
 
-    Optional<User> findByUsername(String username);
-
     Optional<User> findByEmail(String email);
 
-    User login(String username, String password) throws InvalidCredentialsException;
+    User login(String email, String password) throws InvalidCredentialsException;
 
-    boolean logout(String username, String password);
+    boolean logout(String email, String password);
 
 //    void delete(UUID id);
 
