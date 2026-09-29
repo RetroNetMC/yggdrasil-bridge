@@ -39,9 +39,6 @@ public class MsaSession {
     )
     private User user;
 
-    @Column(name = "xbox_user_id", unique = true, nullable = false)
-    private String xboxUserId;
-
     @Column(name = "refresh_token", unique = true, nullable = false)
     private String refreshToken;
 

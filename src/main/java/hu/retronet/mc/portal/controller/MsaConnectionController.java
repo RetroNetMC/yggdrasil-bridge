@@ -3,9 +3,11 @@ package hu.retronet.mc.portal.controller;
 import com.czompi.mcservicessdk.UserAuthentication;
 import com.czompi.mcservicessdk.model.MinecraftAccount;
 import com.czompi.mcservicessdk.model.MsaTokenResponse;
+import hu.retronet.mc.common.entity.MsaSession;
 import hu.retronet.mc.common.entity.User;
 import hu.retronet.mc.common.model.ErrorResponse;
 import hu.retronet.mc.common.repository.GameSessionRepository;
+import hu.retronet.mc.common.repository.MsaSessionRepository;
 import hu.retronet.mc.common.repository.UserRepository;
 import hu.retronet.mc.portal.exceptions.SessionStateException;
 import hu.retronet.mc.portal.utils.PKCEChallenge;
@@ -13,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,10 +47,14 @@ public class MsaConnectionController {
             "&state={1}";
     private final UserRepository userRepository;
     private final GameSessionRepository gameSessionRepository;
+    private final MsaSessionRepository msaSessionRepository;
+    private final TransactionTemplate transactionTemplate;
 
-    public MsaConnectionController(UserRepository userRepository, GameSessionRepository gameSessionRepository) {
+    public MsaConnectionController(UserRepository userRepository, GameSessionRepository gameSessionRepository, MsaSessionRepository msaSessionRepository, TransactionTemplate transactionTemplate) {
         this.userRepository = userRepository;
         this.gameSessionRepository = gameSessionRepository;
+        this.msaSessionRepository = msaSessionRepository;
+        this.transactionTemplate = transactionTemplate;
     }
 
     @GetMapping(path = "/login")
@@ -139,11 +146,12 @@ public class MsaConnectionController {
                 user.setEmail(email);
                 userRepository.save(user);
             }
-//            MsaSession msaSession = new MsaSession();
-//            msaSession.setUser(userRepository.findByUuid(profile.getId()).orElseThrow(() -> new RuntimeException("User not found after creation")));
-//            msaSession.setXboxUserId(msaTokenResponse.getIdToken());
-//            msaSession.setRefreshToken(msaTokenResponse.getRefreshToken());
-//            gameSessionRepository.save(msaSession);
+            MsaSession msaSession = new MsaSession();
+            msaSession.setUser(userRepository.findByUuid(profile.getId()).orElseThrow(() -> new RuntimeException("User not found after creation")));
+            msaSession.setRefreshToken(msaTokenResponse.getRefreshToken());
+            msaSession.setCreatedAt(msaTokenResponse.getGeneratedAt());
+            msaSession.setExpiresAt(msaTokenResponse.getNextRefreshTokenRequestAt());
+            transactionTemplate.execute(status -> msaSessionRepository.save(msaSession));
             return "redirect:/";
         } catch (Exception e) {
             log.warn("Error occurred during token verification or profile retrieval", e);

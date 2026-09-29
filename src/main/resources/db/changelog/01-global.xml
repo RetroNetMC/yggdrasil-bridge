@@ -53,9 +53,6 @@
                 <constraints nullable="false" referencedTableName="users" referencedColumnNames="id"
                              foreignKeyName="fk_msa_sessions_user"/>
             </column>
-            <column name="xbox_user_id" type="VARCHAR(255)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="uc_msa_sessions_xbox_user"/>
-            </column>
             <column name="refresh_token" type="VARCHAR(511)">
                 <constraints nullable="false" unique="true" uniqueConstraintName="uc_msa_sessions_refresh_token"/>
             </column>

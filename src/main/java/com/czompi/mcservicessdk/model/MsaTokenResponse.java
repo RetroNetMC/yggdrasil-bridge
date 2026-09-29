@@ -3,9 +3,11 @@ package com.czompi.mcservicessdk.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -31,5 +33,11 @@ public class MsaTokenResponse implements Serializable {
 
     @JsonProperty("expires_in")
     private int expiresIn;
+
+    @Getter
+    private final LocalDateTime generatedAt = LocalDateTime.now();
+
+    @Getter
+    private final LocalDateTime nextRefreshTokenRequestAt = generatedAt.plusDays(30);
 
 }

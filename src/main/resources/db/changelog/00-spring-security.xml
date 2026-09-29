@@ -6,7 +6,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <!-- SPRING_SESSION table -->
-    <changeSet id="01-create-spring_session-table" author="david.czompo">
+    <changeSet id="0-create-spring_session-table" author="david.czompo">
         <createTable tableName="SPRING_SESSION">
             <column name="PRIMARY_ID" type="CHAR(36)" autoIncrement="false">
                 <constraints primaryKey="true" unique="true" nullable="false"/>
@@ -28,9 +28,6 @@
             </column>
             <column name="PRINCIPAL_NAME" type="VARCHAR(100)" autoIncrement="false"/>
         </createTable>
-        <addUniqueConstraint tableName="SPRING_SESSION"
-                             columnNames="session_id">
-        </addUniqueConstraint>
         <createIndex tableName="SPRING_SESSION" indexName="SPRING_SESSION_IX2">
             <column name="EXPIRY_TIME"/>
         </createIndex>
@@ -40,10 +37,12 @@
     </changeSet>
 
     <!-- SPRING_SESSION_ATTRIBUTES table -->
-    <changeSet id="02-create-spring_session_attributes-table" author="david.czompo">
+    <changeSet id="1-create-spring_session_attributes-table" author="david.czompo">
         <createTable tableName="SPRING_SESSION_ATTRIBUTES">
             <column name="SESSION_PRIMARY_ID" type="CHAR(36)" autoIncrement="false">
-                <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" nullable="false" foreignKeyName="SPRING_SESSION_ATTRIBUTES_FK"
+                             referencedTableName="SPRING_SESSION" referencedColumnNames="PRIMARY_ID"
+                             deleteCascade="true"/>
             </column>
             <column name="ATTRIBUTE_NAME" type="VARCHAR(200)" autoIncrement="false">
                 <constraints primaryKey="true" nullable="false"/>
@@ -52,12 +51,6 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint constraintName="SPRING_SESSION_ATTRIBUTES_FK"
-                                 baseTableName="SPRING_SESSION_ATTRIBUTES"
-                                 baseColumnNames="SESSION_PRIMARY_ID"
-                                 referencedTableName="SPRING_SESSION"
-                                 referencedColumnNames="PRIMARY_ID"
-                                 onDelete="CASCADE"/>
     </changeSet>
 
 </databaseChangeLog>
